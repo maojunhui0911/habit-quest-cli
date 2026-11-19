@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#070a14">
+  <meta name="description" content="Habit Quest - turn daily habits into an ember-lit dungeon crawl.">
+  <title>Habit Quest · Emberdeep Ledger</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="fonts/cinzel.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/silkscreen.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <canvas id="atmosphere" aria-hidden="true"></canvas>
+  <div class="vignette" aria-hidden="true"></div>
+  <div class="grain" aria-hidden="true"></div>
+
+  <svg class="icon-sprite" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+    <symbol id="i-sword" viewBox="0 0 24 24">
+      <path d="M14.5 3.5H20.5V9.5L9 21l-4-.5L4.5 16 14.5 3.5Z"/>
+      <path d="M7 13.5 10.5 17"/><path d="M14 5.5 18.5 10"/>
+    </symbol>
+    <symbol id="i-flame" viewBox="0 0 24 24">
+      <path d="M12.4 2.5c.4 3 3.2 4.4 4.4 7.1 1.2 2.6.2 6.1-2.1 7.7 1-.1 1.8-.6 2.5-1.4.1 3.5-2.6 6-5.8 6-3.4 0-6-2.4-6-5.8 0-2.4 1.2-4.2 2.6-5.9.1 1.6.8 2.6 1.8 3.1-.7-3.7.8-7.4 2.6-10.8Z"/>
+    </symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24">
+      <path d="M12 2.8 20 6v6.1c0 4.4-3.2 7.6-8 9.1-4.8-1.5-8-4.7-8-9.1V6l8-3.2Z"/>
+      <path d="M12 6.5v11" stroke="rgba(7,10,20,.35)"/>
+    </symbol>
+    <symbol id="i-crown" viewBox="0 0 24 24">
+      <path d="M3 8.5 7.5 11 12 5l4.5 6L21 8.5V19H3V8.5Z"/><path d="M3 19h18" stroke="rgba(7,10,20,.35)"/>
+    </symbol>
+    <symbol id="i-scroll" viewBox="0 0 24 24">
+      <path d="M6 4h12a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z"/>
+      <path d="M8 8h8M8 12h8M8 16h5"/>
+    </symbol>
+    <symbol id="i-star" viewBox="0 0 24 24">
+      <path d="m12 2.6 2.8 6 6.5.8-4.8 4.5 1.3 6.4L12 17.1l-5.8 3.2 1.3-6.4L2.7 9.4l6.5-.8 2.8-6Z"/>
+    </symbol>
+    <symbol id="i-skull" viewBox="0 0 24 24">
+      <path d="M12 2.5c5 0 8.5 3.4 8.5 8 0 2.7-1.2 4.6-2.7 6v4H6.2v-4c-1.5-1.4-2.7-3.3-2.7-6 0-4.6 3.5-8 8.5-8Z"/>
+      <circle cx="8.8" cy="10.5" r="2.1" fill="rgba(7,10,20,.55)"/>
+      <circle cx="15.2" cy="10.5" r="2.1" fill="rgba(7,10,20,.55)"/>
+      <path d="M9.5 16.5h5" stroke="rgba(7,10,20,.55)"/>
+    </symbol>
+    <symbol id="i-check" viewBox="0 0 24 24">
+      <path d="m4.5 12.5 5 5 10-11" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24">
+      <path d="M12 4v16M4 12h16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="i-sound" viewBox="0 0 24 24">
+      <path d="M4 9v6h4l5 4V5L8 9H4Z"/>
+      <path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="i-mute" viewBox="0 0 24 24">
+      <path d="M4 9v6h4l5 4V5L8 9H4Z"/>
+      <path d="m16 9.5 4 5m0-5-4 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="i-trash" viewBox="0 0 24 24">
+      <path d="M4 6.5h16M9.5 6.5V4h5v2.5M6.5 6.5 7.5 21h9l1-14.5M10 10.5v6M14 10.5v6" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="i-undo" viewBox="0 0 24 24">
+      <path d="M9 5 4 10l5 5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M4 10h9a6 6 0 0 1 0 12h-2" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="i-pencil" viewBox="0 0 24 24">
+      <path d="m4 20 1-5L16.5 3.5l4 4L9 19l-5 1Z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
+      <path d="m14.5 5.5 4 4" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    </symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24">
+      <path d="M6 10.5h12V21H6V10.5Z"/><path d="M8.5 10.5V7a3.5 3.5 0 0 1 7 0v3.5" fill="none" stroke="currentColor" stroke-width="1.8"/>
+    </symbol>
+    <symbol id="i-close" viewBox="0 0 24 24">
+      <path d="m5 5 14 14M19 5 5 19" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="i-spark" viewBox="0 0 24 24">
+      <path d="M12 2c.6 5.8 3.6 8.9 10 10-6.4 1.1-9.4 4.2-10 10-.6-5.8-3.6-8.9-10-10 6.4-1.1 9.4-4.2 10-10Z"/>
+    </symbol>
+  </svg>
+
+  <div class="boot" id="boot" aria-hidden="true">
+    <div class="boot-rune"><canvas id="boot-sigil" width="7" height="7"></canvas></div>
+    <p class="boot-text">Entering the Emberdeep</p>
+    <p class="boot-sub">lighting the torches…</p>
+  </div>
+
+  <div class="shell">
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">
+          <canvas id="brand-sigil" width="7" height="7"></canvas>
+        </span>
+        <div class="brand-text">
+          <h1>Habit Quest</h1>
+          <p>Emberdeep Ledger</p>
+        </div>
+      </div>
+      <div class="topbar-side">
+        <p class="today"><span class="today-dot" aria-hidden="true"></span><span id="today-label">—</span></p>
+        <button class="icon-btn" id="sound-toggle" type="button" aria-pressed="false" title="Toggle sound (off)">
+          <svg class="icon" aria-hidden="true"><use href="#i-mute"/></svg>
+          <span class="sr-only">Toggle sound</span>
+        </button>
+      </div>
+    </header>
+
+    <main class="dungeon">
+      <!-- HERO ------------------------------------------------------------ -->
+      <section class="panel hero-panel" aria-labelledby="hero-heading">
+        <h2 class="sr-only" id="hero-heading">Your hero</h2>
+        <div class="hero-stage">
+          <div class="hero-aura" aria-hidden="true"></div>
+          <svg class="level-ring" viewBox="0 0 200 200" aria-hidden="true">
+            <defs>
+              <linearGradient id="ring-gradient" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#79e6d2"/>
+                <stop offset=".55" stop-color="#e8c173"/>
+                <stop offset="1" stop-color="#ff8a3d"/>
+              </linearGradient>
+              <filter id="ring-glow" x="-40%" y="-40%" width="180%" height="180%">
+                <feGaussianBlur stdDeviation="2.6" result="blur"/>
+                <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+              </filter>
+            </defs>
+            <circle class="ring-track" cx="100" cy="100" r="88"/>
+            <circle class="ring-progress" id="ring-progress" cx="100" cy="100" r="88"
+                    stroke="url(#ring-gradient)" filter="url(#ring-glow)"/>
+            <circle class="ring-dash" cx="100" cy="100" r="79"/>
+          </svg>
+          <div class="hero-sprite-wrap">
+            <canvas id="hero-sprite" width="20" height="20" aria-hidden="true"></canvas>
+          </div>
+          <div class="hero-shadow" aria-hidden="true"></div>
+          <div class="level-seal" aria-label="Hero level">
+            <span class="level-seal-number" id="hero-level">1</span>
+          </div>
+        </div>
+
+        <button class="hero-name" id="hero-name-btn" type="button" title="Rename your hero">
+          <span id="hero-name">Wanderer</span>
+          <svg class="icon" aria-hidden="true"><use href="#i-pencil"/></svg>
+        </button>
+        <p class="hero-rank"><span id="hero-rank">Novice</span><i class="diamond" aria-hidden="true"></i>Level <span id="hero-level-text">1</span></p>
+
+        <div class="xp-block">
+          <div class="xp-labels">
+            <span class="xp-label">Experience</span>
+            <span class="xp-numbers"><b id="xp-current">0</b><span class="slash">/</span><span id="xp-next">100</span></span>
+          </div>
+          <div class="xp-track">
+            <div class="xp-fill" id="xp-fill"></div>
+            <div class="xp-ticks" aria-hidden="true"></div>
+          </div>
+        </div>
+
+        <dl class="hero-stats">
+          <div><dt>Cleared</dt><dd id="stat-completions">0</dd></div>
+          <div><dt>Best streak</dt><dd><span id="stat-best">0</span><small>d</small></dd></div>
+          <div><dt>Days</dt><dd id="stat-days">0</dd></div>
+        </dl>
+
+        <div class="rank-ladder">
+          <p class="micro-title">Path of the Emberbound</p>
+          <ol id="rank-ladder"></ol>
+        </div>
+
+        <div class="streak-shrine">
+          <p class="micro-title">Embers alight</p>
+          <ul id="streak-list"></ul>
+        </div>
+
+        <p class="hero-oath">“The dark is patient.<br>You are not.”</p>
+      </section>
+
+      <!-- QUESTS ---------------------------------------------------------- -->
+      <section class="quest-column" aria-labelledby="quests-heading">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">The Daily Gauntlet</p>
+            <h2 id="quests-heading">Today&rsquo;s Quests</h2>
+          </div>
+          <button class="btn btn-gold" id="add-open" type="button">
+            <svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg>
+            New quest
+          </button>
+        </div>
+
+        <div class="boss-card" id="boss-card">
+          <div class="boss-stage">
+            <div class="boss-aura" aria-hidden="true"></div>
+            <canvas id="boss-sprite" width="24" height="20" aria-hidden="true"></canvas>
+            <button class="boss-taunt" id="boss-taunt" type="button" aria-label="Taunt the boss">!</button>
+          </div>
+          <div class="boss-info">
+            <div class="boss-title-row">
+              <div>
+                <p class="boss-kicker">Dungeon boss</p>
+                <h3 id="boss-name">Lord Procrastinus</h3>
+              </div>
+              <p class="boss-hp-label" id="boss-hp-label">0 / 0</p>
+            </div>
+            <div class="hp-track"><div class="hp-fill" id="hp-fill"></div></div>
+            <div class="boss-pips" id="boss-pips" aria-hidden="true"></div>
+            <p class="boss-hint" id="boss-hint">Add a quest to wake the boss.</p>
+          </div>
+          <p class="boss-bubble" id="boss-bubble" hidden></p>
+        </div>
+
+        <ul class="quest-list" id="quest-list" aria-live="polite"></ul>
+
+        <div class="empty-state" id="empty-state" hidden>
+          <div class="empty-door" aria-hidden="true">
+            <span></span>
+          </div>
+          <h3>The dungeon is silent</h3>
+          <p>Every legend begins with a single quest. Name the first habit you want to conquer.</p>
+          <div class="empty-actions">
+            <button class="btn btn-gold" id="empty-add" type="button">Add your first quest</button>
+            <button class="btn btn-ghost" id="empty-demo" type="button">Summon a demo adventure</button>
+          </div>
+        </div>
+
+        <section class="milestones" aria-labelledby="road-heading">
+          <div class="milestones-head">
+            <p class="eyebrow" id="road-heading">The road ahead</p>
+            <span class="milestones-rule" aria-hidden="true"></span>
+          </div>
+          <div class="milestone-grid">
+            <article class="milestone">
+              <span class="milestone-icon"><svg class="icon" aria-hidden="true"><use href="#i-crown"/></svg></span>
+              <div class="milestone-copy">
+                <p class="milestone-label">Next rank</p>
+                <p class="milestone-value" id="ms-rank">—</p>
+                <p class="milestone-sub" id="ms-rank-sub">—</p>
+              </div>
+            </article>
+            <article class="milestone">
+              <span class="milestone-icon"><svg class="icon" aria-hidden="true"><use href="#i-flame"/></svg></span>
+              <div class="milestone-copy">
+                <p class="milestone-label">Next relic</p>
+                <p class="milestone-value" id="ms-relic">—</p>
+                <p class="milestone-sub" id="ms-relic-sub">—</p>
+              </div>
+            </article>
+            <article class="milestone">
+              <span class="milestone-icon"><svg class="icon" aria-hidden="true"><use href="#i-star"/></svg></span>
+              <div class="milestone-copy">
+                <p class="milestone-label">Last seven days</p>
+                <p class="milestone-value" id="ms-week">0</p>
+                <p class="milestone-sub" id="ms-week-sub">quests cleared</p>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <p class="quest-footnote">
+          <span class="kbd">N</span> new quest
+          <span class="footnote-dot" aria-hidden="true"></span>
+          <span class="kbd">Esc</span> close panel
+          <span class="footnote-dot" aria-hidden="true"></span>
+          <span id="quest-tally">0 cleared</span>
+        </p>
+      </section>
+
+      <!-- SIDE RAIL ------------------------------------------------------- -->
+      <aside class="side-column" aria-label="Relics, history and battle log">
+        <section class="panel side-panel relics-panel">
+          <div class="side-head">
+            <h2>Relics</h2>
+            <span class="side-count" id="relic-count">0 / 9</span>
+          </div>
+          <ul class="relic-grid" id="relic-grid"></ul>
+        </section>
+
+        <section class="panel side-panel">
+          <div class="side-head">
+            <h2>Ember Chronicle</h2>
+            <span class="side-count">12 weeks</span>
+          </div>
+          <div class="heatmap-wrap">
+            <div class="heatmap" id="heatmap" role="img" aria-label="Quest activity over the last twelve weeks"></div>
+          </div>
+          <div class="heatmap-foot">
+            <span>quiet</span>
+            <i class="cell lvl-0" aria-hidden="true"></i>
+            <i class="cell lvl-1" aria-hidden="true"></i>
+            <i class="cell lvl-2" aria-hidden="true"></i>
+            <i class="cell lvl-3" aria-hidden="true"></i>
+            <i class="cell lvl-4" aria-hidden="true"></i>
+            <span>ablaze</span>
+          </div>
+        </section>
+
+        <section class="panel side-panel log-panel">
+          <div class="side-head">
+            <h2>Battle Log</h2>
+            <button class="mini-btn" id="undo-btn" type="button">
+              <svg class="icon" aria-hidden="true"><use href="#i-undo"/></svg>
+              Undo
+            </button>
+          </div>
+          <ol class="battle-log" id="battle-log"></ol>
+        </section>
+      </aside>
+    </main>
+
+    <footer class="footer">
+      <p><span class="footer-rune" aria-hidden="true">✦</span> One quest a day keeps the void at bay.</p>
+      <p class="footer-tech">Local save · <code id="state-path">~/.habit_quest.json</code></p>
+    </footer>
+  </div>
+
+  <!-- ADD QUEST -------------------------------------------------------- -->
+  <div class="modal" id="modal-add" hidden>
+    <div class="modal-backdrop" data-close></div>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modal-add-title">
+      <button class="modal-close" type="button" data-close aria-label="Close">
+        <svg class="icon" aria-hidden="true"><use href="#i-close"/></svg>
+      </button>
+      <p class="eyebrow">Inscribe a new quest</p>
+      <h2 id="modal-add-title">What will you conquer?</h2>
+      <form id="add-form" novalidate>
+        <label class="field">
+          <span class="field-label">Quest name</span>
+          <input id="add-name" name="name" type="text" maxlength="60" required
+                 placeholder="e.g. Write 500 words" autocomplete="off">
+        </label>
+        <label class="field">
+          <span class="field-label">Reward <output id="add-xp-value" for="add-xp">20 XP</output></span>
+          <input id="add-xp" name="xp" type="range" min="5" max="100" step="5" value="20">
+          <span class="range-scale"><span>5</span><span>100</span></span>
+        </label>
+        <p class="form-error" id="add-error" role="alert" hidden></p>
+        <div class="modal-actions">
+          <button class="btn btn-ghost" type="button" data-close>Cancel</button>
+          <button class="btn btn-gold" type="submit">Forge quest</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- RENAME HERO ------------------------------------------------------ -->
+  <div class="modal" id="modal-rename" hidden>
+    <div class="modal-backdrop" data-close></div>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modal-rename-title">
+      <button class="modal-close" type="button" data-close aria-label="Close">
+        <svg class="icon" aria-hidden="true"><use href="#i-close"/></svg>
+      </button>
+      <p class="eyebrow">The name echoes</p>
+      <h2 id="modal-rename-title">Name your hero</h2>
+      <form id="rename-form" novalidate>
+        <label class="field">
+          <span class="field-label">Hero name</span>
+          <input id="rename-name" name="name" type="text" maxlength="32" required
+                 placeholder="Wanderer" autocomplete="off">
+        </label>
+        <p class="form-error" id="rename-error" role="alert" hidden></p>
+        <div class="modal-actions">
+          <button class="btn btn-ghost" type="button" data-close>Cancel</button>
+          <button class="btn btn-gold" type="submit">Set name</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- CONFIRM REMOVE --------------------------------------------------- -->
+  <div class="modal" id="modal-remove" hidden>
+    <div class="modal-backdrop" data-close></div>
+    <div class="modal-card modal-card-small" role="dialog" aria-modal="true" aria-labelledby="modal-remove-title">
+      <p class="eyebrow">Banish a quest</p>
+      <h2 id="modal-remove-title">Abandon “<span id="remove-name"></span>”?</h2>
+      <p class="modal-copy">Its streak record is left behind, but the quest will vanish from your ledger.</p>
+      <p class="form-error" id="remove-error" role="alert" hidden></p>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" type="button" data-close>Keep it</button>
+        <button class="btn btn-danger" id="remove-confirm" type="button">Banish</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="levelup" id="levelup" hidden aria-hidden="true">
+    <div class="levelup-rays"></div>
+    <div class="levelup-content">
+      <p class="levelup-kicker">The embers roar</p>
+      <p class="levelup-title">Level Up</p>
+      <p class="levelup-sub">Level <span id="levelup-level">2</span> · <span id="levelup-rank">Novice</span></p>
+    </div>
+  </div>
+
+  <div class="toasts" id="toasts" aria-live="polite" aria-atomic="false"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>

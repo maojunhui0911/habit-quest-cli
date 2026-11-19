@@ -1,0 +1,4 @@
+__pycache__/
+*.pyc
+.habit_quest.json
+.habit_quest.json.tmp

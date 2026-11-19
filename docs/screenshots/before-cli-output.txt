@@ -1,0 +1,6 @@
+Hero Level: 9 | XP: 640/900
+  - Read 20 pages: +25 XP (streak: 28)
+  - Morning run: +30 XP (streak: 1)
+  - Meditate 10 min: +20 XP (streak: 1)
+  - Practice guitar: +25 XP (streak: 1)
+  - Drink water: +10 XP (streak: 5)
